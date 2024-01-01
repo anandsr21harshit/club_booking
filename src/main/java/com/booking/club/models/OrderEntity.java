@@ -6,9 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
+
+import java.util.Date;
 
 @Document(collection = "Order")
 @Data
@@ -17,19 +20,15 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderEntity {
 
-    @MongoId
-    @Field("_id")
-    String id;
-    int amount;
-    int amount_paid;
-    Object notes;
-    int created_at;
-    int amount_due;
-    String currency;
-    String receipt;
-    String entity;
-    String offer_id;
-    String status;
-    int attempts;
+    private String orderId;
+    private int amount;
+    private Date created_at;
+    private String currency;
+    private String receipt;
+    @DBRef
+    private User user;
+    private String status;
+    private int attempts;
+    private String paymentId;
 
 }

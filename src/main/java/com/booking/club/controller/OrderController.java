@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @Slf4j
 public class OrderController {
@@ -28,4 +30,13 @@ public class OrderController {
         log.info("<<< Inside Create Order Controller >>>");
         return orderService.initiateOrder(paymentRequest);
     }
+
+    @PostMapping("/update_order")
+    public void updateOrder(@RequestBody Map<String,String> updateRequest){
+        String orderId = updateRequest.get("orderId");
+        String status = updateRequest.get("status");
+        String paymentId = updateRequest.get("paymentId");
+        orderService.updateOrderDetails(paymentId,orderId,status);
+    }
+
 }
