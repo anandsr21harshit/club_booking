@@ -35,7 +35,7 @@ public class BookingService {
         List<Integer> availableDates = new ArrayList<>();
 
         dateMap.forEach((key,value) -> {
-            if(value.equals("available")) availableDates.add(key);
+            if(value.equals("booked") || value.equals("pending")) availableDates.add(key);
         });
 
         return availableDates;
