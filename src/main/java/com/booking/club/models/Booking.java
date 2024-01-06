@@ -20,14 +20,16 @@ import java.time.LocalDate;
 public class Booking {
 
     @MongoId
-    @Field("_id")
-    private String id;
+    @Field("bookingId")
+    private String bookingId;
 
-    private String userId;
+    private String userName;
 
-    private LocalDate startDate;
+    private String startDate;
 
-    private LocalDate endDate;
+    private String endDate;
 
     private String amenities;
+
+    private int amount;
 }

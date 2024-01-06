@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -22,6 +23,8 @@ public class BookingService {
 
 
     public List<Integer> fetchAvailableDates(String month,String year){
+
+        month = month.toUpperCase();
         Query query = new Query();
         query.addCriteria(Criteria.where("year").is(year));
         query.addCriteria(Criteria.where("month").is(month));
@@ -39,19 +42,25 @@ public class BookingService {
     }
 
     public void lockDates(Booking booking) {
-        LocalDate startDate = booking.getStartDate();
-        LocalDate endDate = booking.getEndDate();
+        String startDateString = booking.getStartDate();
+        String endDateString = booking.getEndDate();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = LocalDate.parse(startDateString,formatter);
+        LocalDate endDate = LocalDate.parse(endDateString,formatter);
+
+        int startYear = startDate.getYear();
         String startMonth = startDate.getMonth().toString();
-        String endMonth = endDate.getMonth().toString();
         int startDay = startDate.getDayOfMonth();
+
+        int endYear = endDate.getYear();
+        String endMonth = endDate.getMonth().toString();
         int endDay = endDate.getDayOfMonth();
 
-        int year = startDate.getYear();
 
-        if (startMonth.equals(endMonth)) {
+        if ((startMonth.equals(endMonth)) && (startYear == endYear)) {
             Query query = new Query();
-            query.addCriteria(Criteria.where("year").is(String.valueOf(year)));
+            query.addCriteria(Criteria.where("year").is(String.valueOf(startYear)));
             query.addCriteria(Criteria.where("month").is(startMonth));
 
             List<BookingDays> fetchedList = mongoTemplate.find(query, BookingDays.class);
@@ -72,19 +81,24 @@ public class BookingService {
     }
 
     public void releaseDate(Booking booking){
-        LocalDate startDate = booking.getStartDate();
-        LocalDate endDate = booking.getEndDate();
+        String startDateString = booking.getStartDate();
+        String endDateString = booking.getEndDate();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = LocalDate.parse(startDateString,formatter);
+        LocalDate endDate = LocalDate.parse(endDateString,formatter);
+
+        int startYear = startDate.getYear();
         String startMonth = startDate.getMonth().toString();
-        String endMonth = endDate.getMonth().toString();
         int startDay = startDate.getDayOfMonth();
+
+        int endYear = endDate.getYear();
+        String endMonth = endDate.getMonth().toString();
         int endDay = endDate.getDayOfMonth();
 
-        int year = startDate.getYear();
-
-        if (startMonth.equals(endMonth)) {
+        if (startMonth.equals(endMonth) && startYear == endYear) {
             Query query = new Query();
-            query.addCriteria(Criteria.where("year").is(String.valueOf(year)));
+            query.addCriteria(Criteria.where("year").is(String.valueOf(startYear)));
             query.addCriteria(Criteria.where("month").is(startMonth));
 
             List<BookingDays> fetchedList = mongoTemplate.find(query, BookingDays.class);
@@ -100,24 +114,31 @@ public class BookingService {
             update.set("availableDates", dateMap);
             mongoTemplate.updateFirst(query, update, BookingDays.class);
 
-            log.info("Dates locked");
+            log.info("Dates released");
         }
     }
 
-    public void bookDates(Booking booking){
-        LocalDate startDate = booking.getStartDate();
-        LocalDate endDate = booking.getEndDate();
 
+    // max booking 1 month
+    public void bookDates(Booking booking){
+        String startDateString = booking.getStartDate();
+        String endDateString = booking.getEndDate();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = LocalDate.parse(startDateString,formatter);
+        LocalDate endDate = LocalDate.parse(endDateString,formatter);
+
+        int startYear = startDate.getYear();
         String startMonth = startDate.getMonth().toString();
-        String endMonth = endDate.getMonth().toString();
         int startDay = startDate.getDayOfMonth();
+
+        int endYear = endDate.getYear();
+        String endMonth = endDate.getMonth().toString();
         int endDay = endDate.getDayOfMonth();
 
-        int year = startDate.getYear();
-
-        if(startMonth.equals(endMonth)){
+        if(startMonth.equals(endMonth) && startYear == endYear){
             Query query = new Query();
-            query.addCriteria(Criteria.where("year").is(String.valueOf(year)));
+            query.addCriteria(Criteria.where("year").is(String.valueOf(startYear)));
             query.addCriteria(Criteria.where("month").is(startMonth));
 
             List<BookingDays> fetchedList = mongoTemplate.find(query,BookingDays.class);
@@ -136,7 +157,5 @@ public class BookingService {
             log.info("Dates booked");
         }
     }
-
-
 
 }
