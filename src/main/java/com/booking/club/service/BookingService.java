@@ -41,9 +41,9 @@ public class BookingService {
         return availableDates;
     }
 
-    public void lockDates(Booking booking) {
-        String startDateString = booking.getStartDate();
-        String endDateString = booking.getEndDate();
+    public void lockDates(Map<String,String> dateRequest) {
+        String startDateString = dateRequest.get("startDate");
+        String endDateString = dateRequest.get("endDate");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startDate = LocalDate.parse(startDateString,formatter);

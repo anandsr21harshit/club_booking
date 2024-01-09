@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -34,9 +35,9 @@ public class BookingController {
     }
 
     @PostMapping("/lock_dates")
-    public void lockDateSlots(@RequestBody Booking booking){
+    public void lockDateSlots(@RequestBody Map<String,String> dates){
         //book dates
-        bookingService.lockDates(booking);
+        bookingService.lockDates(dates);
     }
 
     // call this endpoint after 8min of login
